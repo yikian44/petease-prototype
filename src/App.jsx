@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 
 export default function App() {
-  const [currentScreen, setCurrentScreen] = useState('onboarding');
+  const [currentScreen, setCurrentScreen] = useState('splash');
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   const navigateTo = (screen) => {
@@ -19,8 +19,13 @@ export default function App() {
   };
 
   const screens = [
-    { id: 'onboarding', name: '1. Onboarding Screens' },
+    { id: 'splash', name: '0. Splash Screen' },
+    { id: 'onboarding', name: '1. Onboarding' },
     { id: 'auth', name: '2. Login / Register' },
+    { id: 'email-signup', name: '2a. Email Sign Up' },
+    { id: 'otp-verify', name: '2b. OTP Verification' },
+    { id: 'forgot-password', name: '2c. Forgot Password' },
+    { id: 'owner-setup', name: '2d. Owner Setup' },
     { id: 'pet-profile', name: '3. Create Pet Profile' },
     { id: 'home', name: '4. Home Screen' },
     { id: 'explore', name: '5. Explore / Search' },
@@ -45,7 +50,7 @@ export default function App() {
             </div>
             <div>
               <h1 className="text-xl font-extrabold text-slate-800">PetEase</h1>
-              <p className="text-xs text-slate-500 font-medium">12-Screen Master Prototype</p>
+              <p className="text-xs text-slate-500 font-medium">17-Screen Master Prototype</p>
             </div>
           </div>
           
@@ -80,8 +85,13 @@ export default function App() {
 
           {/* 屏幕内容区域 */}
           <div className={`w-full h-full relative transition-opacity duration-200 overflow-x-hidden overflow-y-auto scrollbar-hide bg-slate-50 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
+            {currentScreen === 'splash' && <SplashScreen onNavigate={navigateTo} />}
             {currentScreen === 'onboarding' && <OnboardingScreen onNavigate={navigateTo} />}
             {currentScreen === 'auth' && <AuthScreen onNavigate={navigateTo} />}
+            {currentScreen === 'email-signup' && <EmailSignUpScreen onNavigate={navigateTo} />}
+            {currentScreen === 'otp-verify' && <OtpVerifyScreen onNavigate={navigateTo} />}
+            {currentScreen === 'forgot-password' && <ForgotPasswordScreen onNavigate={navigateTo} />}
+            {currentScreen === 'owner-setup' && <OwnerSetupScreen onNavigate={navigateTo} />}
             {currentScreen === 'pet-profile' && <PetProfileScreen onNavigate={navigateTo} />}
             {currentScreen === 'home' && <HomeScreen onNavigate={navigateTo} />}
             {currentScreen === 'explore' && <ExploreScreen onNavigate={navigateTo} />}
@@ -131,13 +141,40 @@ const BottomNav = ({ activeTab, onNavigate }) => (
 
 
 // ==============================
+// 0. Splash Screen
+// ==============================
+const SplashScreen = ({ onNavigate }) => {
+  // Simulate auth check delay
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      onNavigate('onboarding');
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <div className="w-full h-full bg-teal-500 flex flex-col items-center justify-center text-white relative">
+      <div className="w-28 h-28 bg-white rounded-3xl mb-6 flex items-center justify-center shadow-2xl shadow-teal-900/20">
+        <PawPrint size={56} className="text-teal-500" />
+      </div>
+      <h1 className="text-4xl font-black tracking-tight mb-2">PetEase</h1>
+      <p className="text-teal-100 font-medium tracking-wide">Your Pet Care Companion</p>
+      
+      <div className="absolute bottom-12 inset-x-0 flex justify-center">
+        <div className="w-6 h-6 border-4 border-teal-200 border-t-white rounded-full animate-spin"></div>
+      </div>
+    </div>
+  );
+};
+
+
+// ==============================
 // 1. Onboarding Screens
 // ==============================
 const OnboardingScreen = ({ onNavigate }) => (
   <div className="w-full h-full bg-white flex flex-col pt-16 pb-10">
     <div className="flex-1 px-8 flex flex-col justify-center items-center text-center">
       <div className="w-64 h-72 bg-teal-50 rounded-[3rem] mb-10 flex items-center justify-center relative shadow-inner overflow-hidden">
-        {/* Placeholder for Illustration */}
         <div className="absolute inset-0 bg-gradient-to-br from-teal-100 to-teal-50"></div>
         <PawPrint size={80} className="text-teal-200 relative z-10" />
       </div>
@@ -169,56 +206,208 @@ const OnboardingScreen = ({ onNavigate }) => (
 // ==============================
 // 2. Login / Register
 // ==============================
-const AuthScreen = ({ onNavigate }) => (
-  <div className="w-full h-full flex flex-col px-6 pt-16 pb-10 bg-white overflow-y-auto">
-    <div className="flex-1 flex flex-col justify-center">
-      <div className="w-20 h-20 mb-8 bg-teal-50 rounded-3xl flex items-center justify-center shadow-sm">
-        <PawPrint size={36} className="text-teal-500" />
+const AuthScreen = ({ onNavigate }) => {
+  const [showSimulateModal, setShowSimulateModal] = useState(false);
+
+  return (
+    <div className="w-full h-full flex flex-col px-6 pt-16 pb-10 bg-white overflow-y-auto relative">
+      <div className="flex-1 flex flex-col justify-center">
+        <div className="w-20 h-20 mb-8 bg-teal-50 rounded-3xl flex items-center justify-center shadow-sm">
+          <PawPrint size={36} className="text-teal-500" />
+        </div>
+        <h2 className="text-3xl font-bold text-slate-800 mb-2">Welcome Back</h2>
+        <p className="text-slate-500 mb-10">Your trusted pet care companion.</p>
+
+        <div className="w-full space-y-4">
+          <button onClick={() => setShowSimulateModal(true)} className="w-full bg-white border-2 border-slate-100 text-slate-700 py-3.5 rounded-2xl font-semibold text-base hover:bg-slate-50 active:scale-95 transition-all flex items-center justify-center gap-3">
+            <svg className="w-5 h-5" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+            Continue with Google
+          </button>
+
+          <button onClick={() => setShowSimulateModal(true)} className="w-full bg-white border-2 border-slate-100 text-slate-700 py-3.5 rounded-2xl font-semibold text-base hover:bg-slate-50 active:scale-95 transition-all flex items-center justify-center gap-3">
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M17.05 20.28c-.98.95-2.05 1.8-3.08 1.8-1.09 0-1.44-.65-2.67-.65-1.2 0-1.58.62-2.63.65-1.07.03-2.24-.91-3.21-1.9-2.05-2.08-3.66-5.88-2.65-8.6.5-1.35 1.76-2.22 3.12-2.25 1.05-.03 2.03.7 2.66.7.62 0 1.83-.88 3.12-.75 1.34.13 2.56.66 3.23 1.67-2.76 1.7-2.27 5.75.52 6.91-.65 1.61-1.4 3.08-2.41 4.42zM15.13 3.46c.55-.66.92-1.58.82-2.46-.8.03-1.77.53-2.33 1.2-.48.56-.91 1.48-.79 2.36.87.07 1.75-.43 2.3-1.1z"/>
+            </svg>
+            Continue with Apple
+          </button>
+
+          <div className="relative py-4">
+            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-100"></div></div>
+            <div className="relative flex justify-center"><span className="bg-white px-4 text-xs font-semibold text-slate-400 tracking-wider">OR LOG IN WITH EMAIL</span></div>
+          </div>
+
+          <div className="space-y-4">
+            <input type="email" placeholder="Email Address" className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 px-5 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all" />
+            <input type="password" placeholder="Password" className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 px-5 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all" />
+          </div>
+
+          <div className="flex justify-end pt-1">
+            <button onClick={() => onNavigate('forgot-password')} className="text-teal-600 font-bold text-sm">Forgot Password?</button>
+          </div>
+
+          <div className="pt-2">
+            <button onClick={() => onNavigate('home')} className="w-full bg-slate-900 text-white py-4 rounded-2xl font-semibold text-lg shadow-lg shadow-slate-900/20 active:scale-95 transition-transform">
+              Log In
+            </button>
+          </div>
+        </div>
       </div>
-      <h2 className="text-3xl font-bold text-slate-800 mb-2">Welcome Back</h2>
-      <p className="text-slate-500 mb-10">Your trusted pet care companion.</p>
+      
+      <div className="pt-8 text-center mt-auto">
+        <p className="text-slate-500 text-sm">
+          Don't have an account?{' '}
+          <button onClick={() => onNavigate('email-signup')} className="text-teal-600 font-bold hover:text-teal-700">Sign Up</button>
+        </p>
+      </div>
+
+      {/* OAuth Simulation Modal */}
+      {showSimulateModal && (
+        <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-6 animate-fade-in">
+          <div className="bg-white w-full rounded-3xl p-6 shadow-2xl">
+            <h3 className="font-bold text-xl text-slate-800 mb-2">OAuth Simulation</h3>
+            <p className="text-sm text-slate-500 mb-6">In a real app, Google/Apple auth succeeds. Should we simulate a returning user or a brand new user?</p>
+            <div className="space-y-3">
+              <button onClick={() => { setShowSimulateModal(false); onNavigate('home'); }} className="w-full bg-slate-100 text-slate-800 py-3.5 rounded-xl font-bold">Returning User (Go to Home)</button>
+              <button onClick={() => { setShowSimulateModal(false); onNavigate('owner-setup'); }} className="w-full bg-teal-500 text-white py-3.5 rounded-xl font-bold shadow-md shadow-teal-500/20">New User (Setup Profile)</button>
+              <button onClick={() => setShowSimulateModal(false)} className="w-full bg-white border border-slate-200 text-slate-500 py-3.5 rounded-xl font-bold mt-2">Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ==============================
+// 2a. Email Sign Up Screen
+// ==============================
+const EmailSignUpScreen = ({ onNavigate }) => (
+  <div className="w-full h-full flex flex-col px-6 pt-16 pb-10 bg-white overflow-y-auto">
+    <div className="flex-1">
+      <button onClick={() => onNavigate('auth')} className="w-10 h-10 flex items-center justify-center rounded-full bg-slate-50 text-slate-600 mb-6">
+        <ChevronLeft size={20} />
+      </button>
+      <h2 className="text-3xl font-bold text-slate-800 mb-2">Create Account</h2>
+      <p className="text-slate-500 mb-10">Sign up to start booking trusted pet services.</p>
 
       <div className="w-full space-y-4">
-        <button className="w-full bg-white border-2 border-slate-100 text-slate-700 py-3.5 rounded-2xl font-semibold text-base hover:bg-slate-50 active:scale-95 transition-all flex items-center justify-center gap-3">
-          <svg className="w-5 h-5" viewBox="0 0 24 24">
-            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-          </svg>
-          Continue with Google
-        </button>
+        <input type="email" placeholder="Email Address" className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 px-5 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all" />
+        <input type="password" placeholder="Password (Min 8 characters)" className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 px-5 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all" />
+        <input type="password" placeholder="Confirm Password" className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 px-5 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all" />
 
-        <button className="w-full bg-white border-2 border-slate-100 text-slate-700 py-3.5 rounded-2xl font-semibold text-base hover:bg-slate-50 active:scale-95 transition-all flex items-center justify-center gap-3">
-          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M17.05 20.28c-.98.95-2.05 1.8-3.08 1.8-1.09 0-1.44-.65-2.67-.65-1.2 0-1.58.62-2.63.65-1.07.03-2.24-.91-3.21-1.9-2.05-2.08-3.66-5.88-2.65-8.6.5-1.35 1.76-2.22 3.12-2.25 1.05-.03 2.03.7 2.66.7.62 0 1.83-.88 3.12-.75 1.34.13 2.56.66 3.23 1.67-2.76 1.7-2.27 5.75.52 6.91-.65 1.61-1.4 3.08-2.41 4.42zM15.13 3.46c.55-.66.92-1.58.82-2.46-.8.03-1.77.53-2.33 1.2-.48.56-.91 1.48-.79 2.36.87.07 1.75-.43 2.3-1.1z"/>
-          </svg>
-          Continue with Apple
-        </button>
-
-        <div className="relative py-4">
-          <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-100"></div></div>
-          <div className="relative flex justify-center"><span className="bg-white px-4 text-xs font-semibold text-slate-400 tracking-wider">OR EMAIL</span></div>
-        </div>
-
-        <div className="space-y-4">
-          <input type="email" placeholder="Email Address" className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 px-5 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all" />
-          <input type="password" placeholder="Password" className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 px-5 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all" />
-        </div>
-
-        <div className="pt-2">
-          <button onClick={() => onNavigate('home')} className="w-full bg-slate-900 text-white py-4 rounded-2xl font-semibold text-lg shadow-lg shadow-slate-900/20 active:scale-95 transition-transform">
-            Log In
+        <div className="pt-6">
+          <button onClick={() => onNavigate('otp-verify')} className="w-full bg-teal-500 text-white py-4 rounded-2xl font-bold text-lg shadow-lg shadow-teal-500/20 active:scale-95 transition-transform">
+            Sign Up
           </button>
         </div>
       </div>
     </div>
-    
-    <div className="pt-8 text-center mt-auto">
-      <p className="text-slate-500 text-sm">
-        Don't have an account?{' '}
-        <button onClick={() => onNavigate('pet-profile')} className="text-teal-600 font-bold hover:text-teal-700">Sign Up</button>
-      </p>
+  </div>
+);
+
+
+// ==============================
+// 2b. OTP Verification Screen
+// ==============================
+const OtpVerifyScreen = ({ onNavigate }) => (
+  <div className="w-full h-full flex flex-col px-6 pt-16 pb-10 bg-white overflow-y-auto">
+    <div className="flex-1">
+      <button onClick={() => onNavigate('email-signup')} className="w-10 h-10 flex items-center justify-center rounded-full bg-slate-50 text-slate-600 mb-6">
+        <ChevronLeft size={20} />
+      </button>
+      <h2 className="text-3xl font-bold text-slate-800 mb-2">Verify Email</h2>
+      <p className="text-slate-500 mb-10">We've sent a 4-digit code to your email. Please enter it below.</p>
+
+      <div className="flex justify-between gap-4 mb-8">
+        {[1, 2, 3, 4].map(i => (
+          <input key={i} type="text" maxLength={1} placeholder="0" className="w-16 h-16 text-center text-2xl font-bold bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all" />
+        ))}
+      </div>
+
+      <button onClick={() => onNavigate('owner-setup')} className="w-full bg-teal-500 text-white py-4 rounded-2xl font-bold text-lg shadow-lg shadow-teal-500/20 active:scale-95 transition-transform mb-8">
+        Verify Account
+      </button>
+
+      <div className="text-center">
+        <p className="text-slate-500 text-sm">Didn't receive the code?</p>
+        <button className="text-teal-600 font-bold mt-1">Resend Code</button>
+      </div>
+    </div>
+  </div>
+);
+
+
+// ==============================
+// 2c. Forgot Password
+// ==============================
+const ForgotPasswordScreen = ({ onNavigate }) => {
+  const [sent, setSent] = useState(false);
+
+  return (
+    <div className="w-full h-full flex flex-col px-6 pt-16 pb-10 bg-white overflow-y-auto">
+      <div className="flex-1">
+        <button onClick={() => onNavigate('auth')} className="w-10 h-10 flex items-center justify-center rounded-full bg-slate-50 text-slate-600 mb-6">
+          <ChevronLeft size={20} />
+        </button>
+        <h2 className="text-3xl font-bold text-slate-800 mb-2">Reset Password</h2>
+        <p className="text-slate-500 mb-10">Enter your email address and we will send you a link to reset your password.</p>
+
+        {sent ? (
+          <div className="bg-emerald-50 border border-emerald-100 rounded-3xl p-6 text-center animate-fade-in">
+             <div className="w-16 h-16 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4">
+               <Mail size={32} />
+             </div>
+             <h3 className="font-bold text-slate-800 text-lg mb-2">Email Sent!</h3>
+             <p className="text-sm text-slate-600 mb-6">Check your inbox for instructions to reset your password.</p>
+             <button onClick={() => onNavigate('auth')} className="w-full bg-slate-900 text-white py-3 rounded-xl font-bold">Back to Login</button>
+          </div>
+        ) : (
+          <div className="w-full space-y-6">
+            <input type="email" placeholder="Email Address" className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 px-5 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all" />
+            <button onClick={() => setSent(true)} className="w-full bg-teal-500 text-white py-4 rounded-2xl font-bold text-lg shadow-lg shadow-teal-500/20 active:scale-95 transition-transform">
+              Send Reset Link
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+
+// ==============================
+// 2d. Owner Setup
+// ==============================
+const OwnerSetupScreen = ({ onNavigate }) => (
+  <div className="w-full h-full flex flex-col px-6 pt-16 pb-10 bg-white overflow-y-auto">
+    <div className="flex-1">
+      <h2 className="text-3xl font-bold text-slate-800 mb-2 mt-4">Profile Setup</h2>
+      <p className="text-slate-500 mb-10">Let's get to know you better before adding your furry friends!</p>
+
+      <div className="flex justify-center mb-8">
+        <div className="w-32 h-32 bg-slate-100 rounded-full border-4 border-white shadow-lg flex flex-col items-center justify-center text-slate-400 relative cursor-pointer group">
+          <User size={40} className="mb-1" />
+          <div className="absolute bottom-0 right-0 w-10 h-10 bg-teal-500 rounded-full border-4 border-white flex items-center justify-center text-white">
+             <Camera size={18} />
+          </div>
+        </div>
+      </div>
+
+      <div className="w-full space-y-4">
+        <input type="text" placeholder="Full Name" className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 px-5 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all" />
+        <input type="text" placeholder="Phone Number (Optional)" className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 px-5 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all" />
+
+        <div className="pt-8">
+          <button onClick={() => onNavigate('pet-profile')} className="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold text-lg shadow-lg shadow-slate-900/20 active:scale-95 transition-transform">
+            Continue
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 );
@@ -229,11 +418,14 @@ const AuthScreen = ({ onNavigate }) => (
 // ==============================
 const PetProfileScreen = ({ onNavigate }) => (
   <div className="w-full h-full flex flex-col bg-slate-50 relative pb-20">
-    <div className="bg-white pt-14 pb-4 px-6 border-b border-slate-100 sticky top-0 z-10 flex items-center gap-4">
-      <button onClick={() => onNavigate('auth')} className="w-10 h-10 flex items-center justify-center rounded-full bg-slate-50 text-slate-600">
-        <ChevronLeft size={20} />
-      </button>
-      <h2 className="text-xl font-bold text-slate-800">Create Pet Profile</h2>
+    <div className="bg-white pt-14 pb-4 px-6 border-b border-slate-100 sticky top-0 z-10 flex items-center justify-between">
+      <div className="flex items-center gap-4">
+        <button onClick={() => onNavigate('owner-setup')} className="w-10 h-10 flex items-center justify-center rounded-full bg-slate-50 text-slate-600">
+          <ChevronLeft size={20} />
+        </button>
+        <h2 className="text-xl font-bold text-slate-800">Add a Pet</h2>
+      </div>
+      <button onClick={() => onNavigate('home')} className="text-teal-600 font-bold text-sm bg-teal-50 px-3 py-1.5 rounded-lg">Skip</button>
     </div>
 
     <div className="p-6 space-y-6 overflow-y-auto">
